@@ -1,0 +1,5 @@
+.venv/
+data/raw/
+__pycache__/
+data/nfl.db
+sqlite practice.sql
