@@ -9,9 +9,11 @@ with open('schema.sql','r') as f:
     contents = f.read()
     cursor.executescript(contents)
 
+    # grabbing column names
     cursor.execute("PRAGMA table_info(schedules)")
     schedule_columns = [row[1] for row in cursor.fetchall()]
 
+    #grabbing team names
     cursor.execute("PRAGMA table_info(team_stats)")
     team_columns = [row[1] for row in cursor.fetchall()]
 
