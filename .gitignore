@@ -3,3 +3,5 @@ data/raw/
 __pycache__/
 data/nfl.db
 sqlite practice.sql
+notebooks/merged_output.csv
+notebooks/test_output.csv

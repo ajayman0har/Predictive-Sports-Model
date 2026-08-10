@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS schedules(
     game_id text PRIMARY KEY,
     season int,
-    week text,
+    week int,
     gameday text,
     away_team text,
     home_team text,

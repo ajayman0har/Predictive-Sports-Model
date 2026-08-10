@@ -8,8 +8,8 @@ cursor = connection.cursor()
 with open('schema.sql','r') as f:
     contents = f.read()
     cursor.executescript(contents)
-    cursor.execute("PRAGMA table_info(schedules)")
 
+    cursor.execute("PRAGMA table_info(schedules)")
     schedule_columns = [row[1] for row in cursor.fetchall()]
 
     cursor.execute("PRAGMA table_info(team_stats)")
