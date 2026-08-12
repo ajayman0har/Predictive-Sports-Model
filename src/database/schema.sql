@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS schedules(
     season int,
     week int,
     gameday text,
+    weekday text,
     away_team text,
     home_team text,
     home_score int,
