@@ -5,3 +5,5 @@ data/nfl.db
 sqlite practice.sql
 notebooks/merged_output.csv
 notebooks/test_output.csv
+src/models/pred_model.pkl
+src/models/calibrated_pred_model.pkl
