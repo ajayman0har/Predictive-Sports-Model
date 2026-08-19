@@ -7,7 +7,7 @@ def calibrate_model():
     with open("pred_model.pkl", "rb") as f:
         model = pickle.load(f)
 
-    X_train, Y_train, X_test, Y_test, test_df = build_data()
+    X_train, Y_train, X_test, Y_test, test_df, game_features_df = build_data()
     calibrated_model = CalibratedClassifierCV(model, method='sigmoid', cv=5)
     calibrated_model.fit(X_train, Y_train)
 

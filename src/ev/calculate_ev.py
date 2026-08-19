@@ -1,4 +1,4 @@
-from odds_utils import moneyline_to_payout
+from src.ev.odds_utils import moneyline_to_payout
 import pickle
 from src.models.train_model import build_data
 import pandas as pd
@@ -15,8 +15,8 @@ def load_model():
     return calibrated_model
 
 def load_data():
-    X_train, Y_train, X_test, Y_test, test_df = build_data()
-    return X_test,test_df
+    X_train, Y_train, X_test, Y_test, test_df, game_features_df = build_data()
+    return X_test,test_df, game_features_df
 
 def ev_check(calibrated_model,X_test,test_df):
 
@@ -43,7 +43,7 @@ def ev_check(calibrated_model,X_test,test_df):
 
 def main():
     calibrated_model = load_model()
-    X_test, test_df = load_data()
+    X_test, test_df,game_features_df = load_data()
     ev_df = ev_check(calibrated_model,X_test,test_df)
     ev_df.to_csv('ev.csv')
 

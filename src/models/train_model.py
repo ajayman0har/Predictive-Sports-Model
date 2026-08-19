@@ -44,7 +44,7 @@ def build_data():
     X_train['weekday'] = X_train['weekday'].astype('category')
     X_test['weekday'] = X_test['weekday'].astype('category')
     connection.close()
-    return X_train, Y_train , X_test, Y_test, test_df
+    return X_train, Y_train , X_test, Y_test, test_df, game_features_df
 
 
 def train_model(X_train,Y_train):
@@ -56,7 +56,7 @@ def train_model(X_train,Y_train):
         pkl.dump(model, f)
 
 def main():
-    X_train, Y_train, X_test, Y_test, test_df = build_data()
+    X_train, Y_train, X_test, Y_test, test_df, game_features_df = build_data()
     train_model(X_train,Y_train)
 
 
