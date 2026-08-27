@@ -8,3 +8,5 @@ notebooks/test_output.csv
 src/models/pred_model.pkl
 src/models/calibrated_pred_model.pkl
 .env
+src/live/live_odds_raw.csv
+src/live/live_odds_raw.json
