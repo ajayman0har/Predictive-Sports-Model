@@ -30,6 +30,7 @@ def did_bet_win(row):
         return 1
     return None
 
+
 def calculate_profits(row):
     if pd.isna(row['bet_on']):
         return 0
@@ -39,6 +40,7 @@ def calculate_profits(row):
     else:
         return -1
 
+#predicted winner row
 def decide_predicted_winner(row):
     if row['home_prob'] > .5:
         return 'home'
