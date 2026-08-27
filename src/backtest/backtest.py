@@ -39,6 +39,13 @@ def calculate_profits(row):
     else:
         return -1
 
+def decide_predicted_winner(row):
+    if row['home_prob'] > .5:
+        return 'home'
+    else:
+        return 'away'
+
+
 def main():
     calibrated_model = load_model()
     X_test, test_df, game_features_df = load_data()
@@ -50,19 +57,25 @@ def main():
     backtest_df = backtest_df.sort_values(by=['season','week'])
     backtest_df['cumulative_profit'] = backtest_df['profits'].cumsum()
 
-    print(backtest_df[['game_id', 'home_ev', 'away_ev', 'bet_on', 'home_win', 'Win', 'profits', 'home_moneyline',
-                       'away_moneyline']].head(10))
-    print(backtest_df['bet_on'].isna().sum())
-    skipped = backtest_df[backtest_df['bet_on'].isna()]
-    print((skipped['profits'] == -1).sum())
 
-    plt.plot(backtest_df['cumulative_profit'].values)
+    predicted_winner_df = backtest(ev_df, test_df)
+    predicted_winner_df['bet_on'] = predicted_winner_df.apply(decide_predicted_winner, axis = 1)
+    predicted_winner_df['Win'] = predicted_winner_df.apply(did_bet_win, axis = 1)
+    predicted_winner_df['profits'] = predicted_winner_df.apply(calculate_profits, axis = 1)
+    predicted_winner_df = predicted_winner_df.sort_values(by=['season','week'])
+    predicted_winner_df['cumulative_profit'] = predicted_winner_df['profits'].cumsum()
+
+
+    plt.plot(backtest_df['cumulative_profit'].values, label='ev bet')
+    plt.plot(predicted_winner_df['cumulative_profit'].values, label='predicted winner')
     plt.xlabel('Bet No.')
     plt.ylabel('Profit')
     plt.title('Cumulative Profit')
+    plt.legend()
     plt.show()
 
 
+    plt.show()
 
 if __name__ == "__main__":
     main()
