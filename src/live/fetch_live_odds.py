@@ -5,12 +5,14 @@ import os
 from dotenv import load_dotenv
 import ast
 import json
+from team_name_to_abr import team_name_to_abr
+
 
 #setting week one
 anchor = datetime.strptime('2026-09-10T00:00:00Z', '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc)
 
 
-
+#load API key and setting json request params
 load_dotenv()
 API_KEY = os.getenv('API_KEY')
 url = "https://api.the-odds-api.com/v4/sports/americanfootball_nfl/odds"
@@ -60,9 +62,24 @@ def fetch_dk_odds(row):
             for market in bookmaker['markets']:
                 if market['key'] == 'h2h':
                     return market['outcomes']
-
+        elif bookmaker['key'] == 'fanduel':
+            for market in bookmaker['markets']:
+                if market['key'] == 'h2h':
+                    return market['outcomes']
     return None
 
+#unpacking the odds row to get home ml
+def get_home_ml(row):
+    for outcome in row['odds']:
+        if outcome['name'] == row['home_team']:
+            return outcome['price']
+    return None
+
+def get_away_ml(row):
+    for outcome in row['odds']:
+        if outcome['name'] == row['away_team']:
+            return outcome['price']
+    return None
 
 def main():
 
@@ -83,10 +100,15 @@ def main():
 
     current_week_df['odds'] = current_week_df.apply(fetch_dk_odds, axis=1)
 
+    current_week_df['home_odds'] = current_week_df.apply(get_home_ml, axis=1)
+    current_week_df['away_odds'] = current_week_df.apply(get_away_ml, axis=1)
+
+    current_week_df['home_team'] = current_week_df['home_team'].map(team_name_to_abr)
+    current_week_df['away_team'] = current_week_df['away_team'].map(team_name_to_abr)
     return current_week_df
 
 
 if __name__ == '__main__':
     result = main()
-    print(result[['home_team', 'away_team','commence_time','week','bookmakers','odds']])
+    print(result[['home_team', 'away_team','commence_time','week','bookmakers','home_odds','away_odds']])
     print(f'Number of games this week: {len(result)}')

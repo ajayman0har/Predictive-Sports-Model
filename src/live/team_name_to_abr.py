@@ -3,7 +3,7 @@ This file is used to convert team names to abbreviations since there is mismatch
 for team identifiers
 """
 
-team_name_to_abbr = {
+team_name_to_abr = {
     'Arizona Cardinals': 'ARI',
     'Atlanta Falcons': 'ATL',
     'Baltimore Ravens': 'BAL',
