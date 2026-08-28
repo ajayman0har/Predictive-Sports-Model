@@ -7,40 +7,8 @@ def build_features():
 
     connection = sql.connect('../../data/nfl.db')
 
-    #grabbing everything from team stats
-    team_stats_query = """
-    SELECT *
-    FROM team_stats
-    """
-
-    #grab everything from schedules
-    schedules_query = """
-    SELECT *
-    FROM schedules
-    """
-
-    #sending query results to dataframes
-    schedules_df = pd.read_sql_query(schedules_query, connection)
-
-    team_stats_df = pd.read_sql_query(team_stats_query, connection)
-
-    team_stats_df = team_stats_df.sort_values(by=['team','season','week'])
-
-    #grabbing all integer columns
-    stat_columns = ['passing_yards', 'passing_tds', 'passing_interceptions', 'passing_epa', 'passing_cpoe', 'passing_40',
-                'rushing_yards', 'rushing_tds', 'rushing_epa', 'rushing_40',
-                'receiving_yards', 'receiving_tds', 'receiving_epa', 'receiving_40', 'receiving_yards_after_catch',
-                'sack_fumbles_lost', 'rushing_fumbles_lost', 'receiving_fumbles_lost',
-                'def_sacks', 'def_interceptions', 'def_tds', 'def_tackles_for_loss',
-                'fg_made', 'fg_att', 'pat_pct']
-
-
-    # rolling columns per stat
-    for i in stat_columns:
-        #shifting the row down 1 to prevent leakage
-        team_stats_df[f'rolling_{i}'] = team_stats_df.groupby('team')[i].transform(lambda x: x.shift(periods=1).rolling(window=5, min_periods=1).mean())
-        team_stats_df[f'rolling_{i}_missing'] = team_stats_df[f'rolling_{i}'].isna()
-        team_stats_df[f'rolling_{i}'] = team_stats_df[f'rolling_{i}'].fillna(-1000)
+    schedules_df = pd.read_sql_query("SELECT * FROM schedules", connection)
+    team_stats_df = get_rolling_team_stats()
 
 
 
@@ -54,6 +22,30 @@ def build_features():
 
     connection.close()
     print('sucessfully built features')
+
+
+def get_rolling_team_stats():
+    connection = sql.connect('../../data/nfl.db')
+    team_stats_df = pd.read_sql_query("SELECT * FROM team_stats", connection)
+    connection.close()
+
+    team_stats_df = team_stats_df.sort_values(by=['team', 'season', 'week'])
+
+    stat_columns = ['passing_yards', 'passing_tds', 'passing_interceptions', 'passing_epa', 'passing_cpoe', 'passing_40',
+                'rushing_yards', 'rushing_tds', 'rushing_epa', 'rushing_40',
+                'receiving_yards', 'receiving_tds', 'receiving_epa', 'receiving_40', 'receiving_yards_after_catch',
+                'sack_fumbles_lost', 'rushing_fumbles_lost', 'receiving_fumbles_lost',
+                'def_sacks', 'def_interceptions', 'def_tds', 'def_tackles_for_loss',
+                'fg_made', 'fg_att', 'pat_pct']
+
+    for i in stat_columns:
+        team_stats_df[f'rolling_{i}'] = team_stats_df.groupby('team')[i].transform(
+            lambda x: x.shift(periods=1).rolling(window=5, min_periods=1).mean())
+        team_stats_df[f'rolling_{i}_missing'] = team_stats_df[f'rolling_{i}'].isna()
+        team_stats_df[f'rolling_{i}'] = team_stats_df[f'rolling_{i}'].fillna(-1000)
+
+    return team_stats_df
+
 
 if __name__ == '__main__':
     build_features()
