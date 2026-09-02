@@ -64,10 +64,15 @@ def predict_live_games(live_game_df):
 
     return live_game_df
 
-if __name__ == '__main__':
+
+def main():
     live_df = build_live_features()
     live_df = merge_schedules(live_df)
     live_game_df, team_info = clean_df(live_df)
     live_game_df = predict_live_games(live_game_df)
     results_df = pd.concat([live_game_df,team_info],axis=1)
     print(results_df[['home_team','away_team','home_prob', 'away_prob', 'home_moneyline', 'away_moneyline', 'home_ev', 'away_ev']])
+    return results_df
+
+if __name__ == '__main__':
+    main()
