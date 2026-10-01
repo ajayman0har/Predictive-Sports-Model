@@ -7,6 +7,9 @@ import nflreadpy as nfl
 import polars as pl
 import pickle as pkl
 from src.ev.calculate_ev import calculate_ev
+from src.features.build_elo import compute_elo_ratings as elo
+
+
 
 def get_upcoming_schedule():
     schedules_df = nfl.load_schedules([2026])
@@ -20,6 +23,7 @@ def get_latest_stats():
     return latest_stats
 
 def build_live_features():
+
     live_df = fetch_live_odds()
     latest_stats = get_latest_stats()
 
@@ -28,6 +32,18 @@ def build_live_features():
 
     live_df = live_df.merge(home_stats, how='left', left_on='home_team', right_on='team_home')
     live_df = live_df.merge(away_stats, how='left', left_on='away_team', right_on='team_away')
+
+    elo_df , current_elo = elo()
+    current_elo_df = pd.DataFrame(list(current_elo.items()), columns=['team', 'elo'])
+
+    away_elo = current_elo_df.add_suffix('_away').rename(columns={'team_away': 'elo_team_away'})
+    home_elo = current_elo_df.add_suffix('_home').rename(columns={'team_home': 'elo_team_home'})
+
+    live_df = live_df.merge(home_elo, how='left', left_on='home_team', right_on='elo_team_home')
+    live_df = live_df.merge(away_elo, how='left', left_on='away_team', right_on='elo_team_away')
+
+    #renaming to fit model
+    live_df = live_df.rename(columns={'elo_home': 'home_elo_pregame', 'elo_away': 'away_elo_pregame'})
 
     return live_df
 
@@ -45,7 +61,7 @@ def clean_df(live_df):
 
     feature_columns = [col for col in live_df if 'rolling_' in col]
     feature_columns.extend(['season','week','weekday','home_rest','away_rest','spread_line',
-                           'total_line','home_moneyline','away_moneyline', 'under_odds', 'over_odds'])
+                           'total_line','home_moneyline','away_moneyline', 'under_odds', 'over_odds','home_elo_pregame','away_elo_pregame'])
     live_df = live_df[feature_columns]
     return live_df, team_info
 
