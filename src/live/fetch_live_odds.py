@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 import ast
 import json
-from team_name_to_abr import team_name_to_abr
+from src.live.team_name_to_abr import team_name_to_abr
 
 
 #setting week one

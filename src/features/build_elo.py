@@ -1,14 +1,20 @@
 import pandas as pd
 import sqlite3
 import math
+import os
+
+def get_db_path():
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(script_dir, '..', '..', 'data', 'nfl.db')
 
 home_adv = 65
 k = 20
 
 def compute_elo_ratings():
-    connection = sqlite3.connect("../../data/nfl.db")  # creates file if it doesn't exist
+    connection = sqlite3.connect(get_db_path())
     schedules_df = pd.read_sql("SELECT * FROM schedules", connection)
     connection.close()
+
 
     schedules_df = schedules_df.sort_values(by=['season','week'])
     #drop ties

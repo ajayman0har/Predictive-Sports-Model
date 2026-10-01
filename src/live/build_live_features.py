@@ -1,4 +1,3 @@
-from fetch_live_odds import *
 import pandas as pd
 import numpy as np
 from src.features.build_features import get_rolling_team_stats
@@ -65,11 +64,16 @@ def clean_df(live_df):
     live_df = live_df[feature_columns]
     return live_df, team_info
 
+import os
+
 def predict_live_games(live_game_df):
     live_game_df['weekday'] = live_game_df['weekday'].astype('category')
 
-    with open("../models/calibrated_pred_model.pkl", "rb") as f:
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    model_path = os.path.join(script_dir, '..', 'models', 'calibrated_pred_model.pkl')
+    with open(model_path, "rb") as f:
         model = pkl.load(f)
+
 
     probabilities = model.predict_proba(live_game_df)
     live_game_df['home_prob'] = probabilities[:,1]

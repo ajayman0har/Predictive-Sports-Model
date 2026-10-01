@@ -9,8 +9,12 @@ def calculate_ev(prob, moneyline,wager):
     ev = ((prob * payout)- ((1-prob)*wager))
     return ev
 
+import os
+
 def load_model():
-    with open ("../models/calibrated_pred_model.pkl", "rb") as f:
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    model_path = os.path.join(script_dir, '..', 'models', 'calibrated_pred_model.pkl')
+    with open(model_path, "rb") as f:
         calibrated_model = pickle.load(f)
     return calibrated_model
 

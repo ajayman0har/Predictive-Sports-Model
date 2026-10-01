@@ -1,16 +1,17 @@
 import sqlite3 as sql
 import pandas as pd
+import os
+
+def get_db_path():
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(script_dir, '..', '..', 'data', 'nfl.db')
+
 def build_features():
-
-    #see all columns if exploring
     pd.options.display.max_columns = None
-
-    connection = sql.connect('../../data/nfl.db')
+    connection = sql.connect(get_db_path())
 
     schedules_df = pd.read_sql_query("SELECT * FROM schedules", connection)
     team_stats_df = get_rolling_team_stats()
-
-
 
     merged_df = schedules_df.merge(team_stats_df, how='left', left_on=['away_team','season','week'],right_on=['team','season','week'])
     merged_df = merged_df.merge(team_stats_df, how='left', left_on=['home_team','season','week'],right_on=['team','season','week'],suffixes=('_home','_away'))
@@ -25,7 +26,7 @@ def build_features():
 
 
 def get_rolling_team_stats():
-    connection = sql.connect('../../data/nfl.db')
+    connection = sql.connect(get_db_path())
     team_stats_df = pd.read_sql_query("SELECT * FROM team_stats", connection)
     connection.close()
 

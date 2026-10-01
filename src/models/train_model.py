@@ -5,9 +5,16 @@ import xgboost as xgb
 import pickle as pkl
 
 
+import os
+
+def get_db_path():
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(script_dir, '..', '..', 'data', 'nfl.db')
+
 def build_data():
     pd.options.display.max_columns = None
-    connection = sql.connect('../../data/nfl.db')
+    connection = sql.connect(get_db_path())
+
 
 
 
