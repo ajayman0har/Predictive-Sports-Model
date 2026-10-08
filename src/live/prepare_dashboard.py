@@ -25,6 +25,7 @@ def main():
     results_df = get_results()
     results_df = add_dashboard_columns(results_df)
     results_df.to_csv('prediction_model.csv', index=False)
+    print(results_df.columns.tolist())
     return results_df
 
 

@@ -10,3 +10,4 @@ src/models/calibrated_pred_model.pkl
 .env
 src/live/live_odds_raw.csv
 src/live/live_odds_raw.json
+src/live/pick_history.csv
