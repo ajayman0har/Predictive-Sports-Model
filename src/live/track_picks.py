@@ -8,7 +8,7 @@ def get_log_path():
 def log_new_picks(results_df):
     log_path = get_log_path()
 
-    results_df = results_df.copy()
+    results_df = results_df.loc[:, ~results_df.columns.duplicated()].copy()
     keep_columns = ['season', 'week', 'home_team', 'away_team', 'home_prob', 'away_prob',
                     'home_moneyline', 'away_moneyline', 'home_ev', 'away_ev',
                     'predicted_winner', 'ev_pick', 'models_agree']
